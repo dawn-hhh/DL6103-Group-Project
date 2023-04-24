@@ -1,19 +1,8 @@
-# train.py
-#!/usr/bin/env	python3
-
-""" train network using pytorch
-
-author baiyu
-"""
-
 import os
 import sys
 import argparse
 import time
 from datetime import datetime
-from cutmix.cutmix import CutMix
-from cutmix.utils import CutMixCrossEntropyLoss
-
 import numpy as np
 import torch
 import torch.nn as nn
