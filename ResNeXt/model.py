@@ -8,9 +8,9 @@ import torch
 # ResNet18/34的残差结构, 用的是2个3x3大小的卷积
 """
 class BasicBlock(nn.Module):
-    expansion = 1   # 残差结构中, 判断主分支的卷积核个数是否发生变化，不变则为1
+    expansion = 1
 
-    def __init__(self, in_channel, out_channel, stride=1, downsample=None, **kwargs):   # downsample 对应虚线残差结构
+    def __init__(self, in_channel, out_channel, stride=1, downsample=None, **kwargs):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=in_channel, out_channels=out_channel,
                                kernel_size=3, stride=stride, padding=1, bias=False
@@ -25,8 +25,8 @@ class BasicBlock(nn.Module):
 
     def forward(self, x):
         identity = x
-        if self.downsample is not None: # 虚线残差结构，需要下采样
-            identity = self.downsample(x)   # 捷径分支short cut
+        if self.downsample is not None: 
+            identity = self.downsample(x)   
 
         out = self.conv1(x)
         out = self.bn1(out)
@@ -42,15 +42,9 @@ class BasicBlock(nn.Module):
 
 """
 # 定义 Bottleneck 模块
-# ResNet50/101/152的残差结构，用的是1x1+3x3+1x1的卷积
+# ResNet50/101/152的残差结构，1x1+3x3+1x1的卷积
 """
 class Bottleneck(nn.Module):
-    """
-    #   注意：原论文中，在虚线残差结构的主分支上，第一个1x1卷积层的步距是2，第二个3x3卷积层步距是1。
-    #  但在pytorch官方实现过程中是第一个1x1卷积层的步距是1，第二个3x3卷积层步距是2，
-    #   这么做的好处是能够在top1上提升大概0.5%的准确率。
-    #   可参考Resnet v1.5 https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch
-       """
     expansion = 4   # 残差结构中第三层卷积核个数是第1/2层卷积核个数的4倍
     def __init__(self, in_channel, out_channel, stride=1, downsample=None, groups=1, width_per_group=64):
         super(Bottleneck, self).__init__()
@@ -74,7 +68,7 @@ class Bottleneck(nn.Module):
     def forward(self, x):
         identity = x
         if self.downsample is not None:
-            identity = self.downsample(x)   # 捷径分支short cut
+            identity = self.downsample(x)  
 
         out = self.conv1(x)
         out = self.bn1(out)
@@ -92,12 +86,7 @@ class Bottleneck(nn.Module):
 
         return out
 
-"""
-# 残差网络结构
-"""
 class ResNet(nn.Module):
-    # block = BasicBlock or Bottleneck
-    # blocks_num 为残差结构中 conv2_x~conv5_x 中残差块个数, 一个列表
     def __init__(self, block, blocks_num, num_classes=1000, include_top=True, groups=1, width_per_group=64):
         super(ResNet, self).__init__()
         self.include_top = include_top
@@ -121,7 +110,6 @@ class ResNet(nn.Module):
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
 
-    # channel 为残差结构中第1层卷积核个数
     def _make_layer(self, block, channel, block_num, stride=1):
         downsample = None
         # ResNet50/101/152 的残差结构, block.expansion=4
@@ -168,31 +156,19 @@ class ResNet(nn.Module):
 
         return x
 
-"""
-# resnet34 结构
-# https://download.pytorch.org/models/resnet34-333f7ec4.pth
-"""
+
 def resnet34(num_classes=1000, include_top=True):
     return ResNet(BasicBlock, [3, 4, 6, 3], num_classes=num_classes, include_top=include_top)
 
-"""
-# resnet50 结构
-# https://download.pytorch.org/models/resnet50-19c8e357.pth
-"""
+
 def resnet50(num_classes=1000, include_top=True):
     return ResNet(Bottleneck, [3, 4, 6, 3], num_classes=num_classes, include_top=include_top)
 
-"""
-# resnet101 结构
-# https://download.pytorch.org/models/resnet101-5d3b4d8f.pth
-"""
+
 def resnet101(num_classes=1000, include_top=True):
     return ResNet(Bottleneck, [3, 4, 23, 3], num_classes=num_classes, include_top=include_top)
 
-"""
-# resnext50_32x4d 结构
-# https://download.pytorch.org/models/resnext50_32x4d-7cdf4587.pth
-"""
+
 def resnext50_32x4d(num_classes=1000, include_top=True):
     groups = 32
     width_per_group = 4
@@ -202,10 +178,7 @@ def resnext50_32x4d(num_classes=1000, include_top=True):
                   groups=groups,
                   width_per_group=width_per_group)
 
-"""
-# resnext101_32x8d 结构
-# https://download.pytorch.org/models/resnext101_32x8d-8ba56ff5.pth
-"""
+
 def resnext101_32x8d(num_classes=1000, include_top=True):
     groups = 32
     width_per_group = 8
@@ -214,12 +187,4 @@ def resnext101_32x8d(num_classes=1000, include_top=True):
                   include_top=include_top,
                   groups=groups,
                   width_per_group=width_per_group)
-
-"""
-测试模型
-"""
-# if __name__ == '__main__':
-#     input1 = torch.rand([224, 3, 224, 224])
-#     model_x = resnet34(num_classes=5, include_top=True)
-#     print(model_x)
-    # output = GoogLeNet(input1)
+# test
