@@ -1,21 +1,13 @@
-""" helper function
-
-author baiyu
-"""
 import os
 import sys
 import re
 import datetime
-
 import numpy
-
 import torch
 from torch.optim.lr_scheduler import _LRScheduler
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-from cutmix.cutmix import CutMix
-from cutmix.utils import CutMixCrossEntropyLoss
 
 def get_network(args):
     """ return given network
