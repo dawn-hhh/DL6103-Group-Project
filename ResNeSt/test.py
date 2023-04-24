@@ -1,13 +1,6 @@
 #test.py
 #!/usr/bin/env python3
 
-""" test neuron network performace
-print top1 and top5 err on test dataset
-of a model
-
-author baiyu
-"""
-
 import argparse
 
 from matplotlib import pyplot as plt
